@@ -90,3 +90,9 @@ def trigger_dependent_segments(segment_id):
 
     for child in children:
         evaluate_segment.delay(child.child_id)
+
+
+def refresh_static_segment(segment_id):
+    evaluate_segment(segment_id)
+
+
