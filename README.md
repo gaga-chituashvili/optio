@@ -113,6 +113,18 @@ core/
 │   └── campaigns.py      # Campaign trigger logic
 ```
 
+```
+frontend/
+├── src/
+│   ├── App.css        # Global styles for the main App component
+│   ├── App.jsx        # Root React component (main UI logic lives here)
+│   ├── api.js         # Axios API configuration (backend communication)
+│   ├── assets/        # Static assets (images, icons, etc.)
+│   ├── index.css      # Global CSS styles (applied to entire app)
+│   └── main.jsx       # Application entry point (ReactDOM render)
+│
+└── vite.config.js     # Vite configuration (build + dev server settings)
+```
 ---
 
 ## 🔄 Segment Evaluation Flow
