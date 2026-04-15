@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core.apps.CoreConfig'
-    "channels",
+    'core.apps.CoreConfig',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +129,11 @@ CHANNEL_LAYERS = {
     },
 }
 
+
+
+CELERY_BEAT_SCHEDULE = {
+    'process-batch-every-10-seconds': {
+        'task': 'core.tasks.process_batch',
+        'schedule': 10.0,
+    },
+}
