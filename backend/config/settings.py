@@ -131,9 +131,3 @@ CHANNEL_LAYERS = {
 
 
 
-CELERY_BEAT_SCHEDULE = {
-    'process-batch-every-10-seconds': {
-        'task': 'core.tasks.process_batch',
-        'schedule': 10.0,
-    },
-}

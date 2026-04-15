@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from core.views import simulate_transaction
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('simulate/', simulate_transaction),
 ]
