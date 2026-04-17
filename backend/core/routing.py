@@ -1,6 +1,6 @@
-from django.urls import path
+from django.urls import path, re_path
 from core.consumers import SegmentConsumer
 
 websocket_urlpatterns = [
-    path("ws/segments/", SegmentConsumer.as_asgi()),
+    re_path(r"ws/segments/$", SegmentConsumer.as_asgi()),
 ]
