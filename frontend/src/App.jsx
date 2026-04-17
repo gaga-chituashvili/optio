@@ -1,11 +1,18 @@
-import { useEffect, useState } from "react";
-import { API } from "./api";
+import { useEffect, useState, useRef } from "react";
+import API from "./api";
 
 function App() {
   const [segments, setSegments] = useState([]);
   const [selected, setSelected] = useState(null);
   const [added, setAdded] = useState([]);
   const [removed, setRemoved] = useState([]);
+
+  const wsRef = useRef(null);
+  const selectedRef = useRef(null);
+
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
 
   useEffect(() => {
     API.get("/segments/")
@@ -14,19 +21,28 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (segments.length > 0 && !selected) {
+      setSelected(segments[0]);
+    }
+  }, [segments]);
+
+  useEffect(() => {
+    if (wsRef.current) return;
+
     const ws = new WebSocket("ws://127.0.0.1:8000/ws/segments/");
+    wsRef.current = ws;
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
-      if (selected && data.segment_id === selected.id) {
-        setAdded(data.added);
-        setRemoved(data.removed);
+      const currentSelected = selectedRef.current;
+
+      if (!currentSelected || data.segment_id === currentSelected.id) {
+        setAdded(data.added || []);
+        setRemoved(data.removed || []);
       }
     };
-
-    return () => ws.close();
-  }, [selected]);
+  }, []);
 
   return (
     <div style={{ padding: 20 }}>
@@ -35,30 +51,39 @@ function App() {
       <ul>
         {segments.map((seg) => (
           <li key={seg.id}>
-            <button onClick={() => setSelected(seg)}>{seg.name}</button>
+            <button
+              onClick={() => {
+                setSelected(seg);
+                setAdded([]);
+                setRemoved([]);
+              }}
+              style={{
+                fontWeight: selected?.id === seg.id ? "bold" : "normal",
+              }}
+            >
+              {seg.name}
+            </button>
           </li>
         ))}
       </ul>
 
-      {selected && (
-        <div style={{ marginTop: 20 }}>
-          <h2>{selected.name}</h2>
+      <div style={{ marginTop: 20 }}>
+        <h2>{selected ? selected.name : "No segment selected"}</h2>
 
-          <h3>🟢 Added</h3>
-          <ul>
-            {added.map((id) => (
-              <li key={id}>{id}</li>
-            ))}
-          </ul>
+        <h3>🟢 Added</h3>
+        <ul>
+          {added.map((id) => (
+            <li key={id}>{id}</li>
+          ))}
+        </ul>
 
-          <h3>🔴 Removed</h3>
-          <ul>
-            {removed.map((id) => (
-              <li key={id}>{id}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+        <h3>🔴 Removed</h3>
+        <ul>
+          {removed.map((id) => (
+            <li key={id}>{id}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
